@@ -2,15 +2,10 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import { useState } from 'react';
 import ActionButton from '../button/ActionButton';
 
-const Description = ({
-  content,
-  setContent,
-  handleDescriptionSave,
-  handleDescriptionCancel,
-}) => {
+const Description = ({ content, setContent, handleSave, handleCancel }) => {
   const [isHidden, setHidden] = useState(true);
   return (
-    <div>
+    <>
       <DialogContentText id='alert-dialog-description'>
         <label className='modal__content--heading' htmlFor='modal__content'>
           Description
@@ -24,19 +19,14 @@ const Description = ({
           value={content}
           onChange={(event) => setContent(event.target.value)}
           onFocus={() => setHidden(false)}
+          onBlur={() => setHidden(true)}
         />
       </DialogContentText>
       <div className='modal__content--buttons' hidden={isHidden}>
-        <ActionButton
-          clickHandler={() => handleDescriptionSave(setHidden)}
-          btnName='Save'
-        />
-        <ActionButton
-          clickHandler={() => handleDescriptionCancel(setHidden)}
-          btnName='Cancel'
-        />
+        <ActionButton clickHandler={handleSave} btnName='Save' />
+        <ActionButton clickHandler={handleCancel} btnName='Cancel' />
       </div>
-    </div>
+    </>
   );
 };
 

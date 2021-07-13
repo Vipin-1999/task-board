@@ -1,5 +1,10 @@
 proper save and cancel features
 
+filter by reporter
+filter by priority
+filter by category
+
+create new task
 add new columns
 auth login
 separate board for each group
