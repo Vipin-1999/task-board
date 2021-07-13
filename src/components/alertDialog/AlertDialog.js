@@ -21,6 +21,9 @@ import StepperPriority from './priority/StepperPriority';
 import Tooltip from '@material-ui/core/Tooltip';
 import Fade from '@material-ui/core/Fade';
 
+import { connect } from 'react-redux';
+import { deleteTicket } from '../../store/actions/ticketActions';
+
 const AlertDialog = ({
   id,
   index,
@@ -32,11 +35,14 @@ const AlertDialog = ({
   issue__priority,
   provided,
   dragHandler,
+  deleteTicket,
 }) => {
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState(issue__title);
   const [status, setStatus] = useState(issue__status);
   const [priority, setPriority] = useState(issue__priority);
+  const [prevContentValue, setPrevContentValue] = useState(description);
+  const [prevCommentValue, setPrevCommentValue] = useState('');
   const [content, setContent] = useState(description);
   const [comment, setComment] = useState('');
 
@@ -45,7 +51,6 @@ const AlertDialog = ({
   const progressIcon = (
     <span className='material-icons progressIcon'>pending</span>
   );
-
   const qaIcon = <span className='material-icons qaIcon'>lightbulb</span>;
 
   const doneIcon = <Checkbox checked={true} style={{ color: '#03a9f4' }} />;
@@ -64,6 +69,7 @@ const AlertDialog = ({
   };
 
   const handleClose = () => {
+    // save to db
     setOpen(false);
   };
 
@@ -76,23 +82,28 @@ const AlertDialog = ({
     setPriority(value);
   };
 
-  const handleDescriptionSave = () => {
-    console.info('You clicked the save.');
+  const handleDescriptionSave = (setDescriptionHidden) => {
+    setDescriptionHidden(true);
+    setPrevContentValue(content);
   };
 
-  const handleDescriptionCancel = () => {
-    // old value
-    console.info('You clicked the cancel.');
+  const handleDescriptionCancel = (setDescriptionHidden) => {
+    setDescriptionHidden(true);
+    setContent(prevContentValue);
   };
 
-  const handleCommentSave = () => {
-    console.info('You clicked the save.');
+  const handleCommentSave = (setCommentHidden) => {
+    setCommentHidden(true);
+    setPrevCommentValue(comment);
   };
 
-  const handleCommentCancel = () => {
-    // setComment('');
-    // save prev value
-    console.info('You clicked the cancel.');
+  const handleCommentCancel = (setCommentHidden) => {
+    setCommentHidden(true);
+    setComment(prevCommentValue);
+  };
+
+  const handleDelete = () => {
+    deleteTicket(id);
   };
 
   return (
@@ -132,7 +143,12 @@ const AlertDialog = ({
             TransitionProps={{ timeout: 600 }}
           >
             <span style={{ float: 'right' }}>
-              <span class='material-icons delete__task--icon'>delete</span>
+              <span
+                class='material-icons delete__task--icon'
+                onClick={handleDelete}
+              >
+                delete
+              </span>
             </span>
           </Tooltip>
         </span>
@@ -193,4 +209,10 @@ const AlertDialog = ({
   );
 };
 
-export default AlertDialog;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    deleteTicket: (docId) => dispatch(deleteTicket(docId)),
+  };
+};
+
+export default connect(null, mapDispatchToProps)(AlertDialog);
