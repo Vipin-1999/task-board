@@ -1,184 +1,161 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DragDropContext } from 'react-beautiful-dnd';
-import uuid from 'uuid/v4';
 import CardList from '../alertDialog/card/CardList';
 import Filter from './filter/Filter';
 import Toast from '../toast/Toast';
+import { connect } from 'react-redux';
 
-const itemsFromBackend = [
-  {
-    id: uuid(),
-    title: 'First task',
-    reporter: 'First Reporter',
-    category: 'First category',
-    priority: 'High',
-    content:
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum. Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-    status: 'Done',
-  },
-  {
-    id: uuid(),
-    title: 'Second task',
-    reporter: 'Second Reporter',
-    category: 'Second category',
-    priority: 'High',
-    content:
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-    status: 'In Progress',
-  },
-  {
-    id: uuid(),
-    title: 'Third task',
-    reporter: 'Third Reporter',
-    category: 'First category',
-    priority: 'Medium',
-    content:
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-    status: 'To Do',
-  },
-  {
-    id: uuid(),
-    title: 'Fourth task',
-    reporter: 'Fourth Reporter',
-    category: 'Third category',
-    priority: 'High',
-    content:
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-    status: 'Ready for QA',
-  },
-  {
-    id: uuid(),
-    title: 'Fifth task',
-    reporter: 'Fifth Reporter',
-    category: 'Second category',
-    priority: 'Low',
-    content:
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.",
-    status: 'Ready for QA',
-  },
-];
+import { db } from '../../store/fbConfig';
+import { addColumn, updateTicket } from '../../store/actions/ticketActions';
 
-const toDoItems = itemsFromBackend.filter(
-  (element) => element.status === 'To Do'
-);
-const inProgressItems = itemsFromBackend.filter(
-  (element) => element.status === 'In Progress'
-);
-const qaItems = itemsFromBackend.filter(
-  (element) => element.status === 'Ready for QA'
-);
-const doneItems = itemsFromBackend.filter(
-  (element) => element.status === 'Done'
-);
+function Board(props) {
+  const { updateTicket, alltickets } = props;
 
-const columnsFromBackend = {
-  [uuid()]: {
-    name: 'To Do',
-    items: toDoItems,
-  },
-  [uuid()]: {
-    name: 'In Progress',
-    items: inProgressItems,
-  },
-  [uuid()]: {
-    name: 'Ready for QA',
-    items: qaItems,
-  },
-  [uuid()]: {
-    name: 'Done',
-    items: doneItems,
-  },
-};
+  var tempArray = alltickets;
+  const itemsFromBackend = tempArray.map((element) => ({ ...element }));
 
-const handleDrag = (
-  curStatus,
-  prevStatus,
-  cardId,
-  cardIndex,
-  columns,
-  setColumns,
-  setToastStatus
-) => {
-  var tempResult = [];
+  const toDoItems = itemsFromBackend
+    .filter((element) => element.status === 'To Do')
+    .sort(function (a, b) {
+      return a.cardIndex - b.cardIndex;
+    });
+  const inProgressItems = itemsFromBackend
+    .filter((element) => element.status === 'In Progress')
+    .sort(function (a, b) {
+      return a.cardIndex - b.cardIndex;
+    });
+  const qaItems = itemsFromBackend
+    .filter((element) => element.status === 'Ready for QA')
+    .sort(function (a, b) {
+      return a.cardIndex - b.cardIndex;
+    });
+  const doneItems = itemsFromBackend
+    .filter((element) => element.status === 'Done')
+    .sort(function (a, b) {
+      return a.cardIndex - b.cardIndex;
+    });
 
-  for (var i in columnsFromBackend) tempResult.push([i, columnsFromBackend[i]]);
-
-  const destData = tempResult.filter(
-    (element) => element[1].name === curStatus
-  );
-
-  const sourceData = tempResult.filter(
-    (element) => element[1].name === prevStatus
-  );
-
-  const result = {
-    combine: null,
-    destination: {
-      index: 0,
-      droppableId: destData[0][0],
+  const columnsFromBackend = {
+    ['to-do-column']: {
+      name: 'To Do',
+      items: toDoItems,
     },
-    draggableId: cardId,
-    mode: 'FLUID',
-    reason: 'DROP',
-    source: {
-      index: cardIndex,
-      droppableId: sourceData[0][0],
+    ['in-progress-column']: {
+      name: 'In Progress',
+      items: inProgressItems,
     },
-    type: 'DEFAULT',
+    ['ready-for-qa-column']: {
+      name: 'Ready for QA',
+      items: qaItems,
+    },
+    ['done-column']: {
+      name: 'Done',
+      items: doneItems,
+    },
   };
-  onDragEnd(result, columns, setColumns, setToastStatus);
-};
 
-const onDragEnd = (result, columns, setColumns, setToastStatus) => {
-  console.log(typeof setToastStatus);
-  if (!result.destination) return;
-  const { source, destination } = result;
-
-  if (source.droppableId !== destination.droppableId) {
-    const sourceColumn = columns[source.droppableId];
-    const destColumn = columns[destination.droppableId];
-    const sourceItems = [...sourceColumn.items];
-    const destItems = [...destColumn.items];
-    const [removed] = sourceItems.splice(source.index, 1);
-    destItems.splice(destination.index, 0, removed);
-    sourceItems.forEach((element) => {
-      element.status = sourceColumn.name;
-    });
-    destItems.forEach((element) => {
-      element.status = destColumn.name;
-    });
-    setColumns({
-      ...columns,
-      [source.droppableId]: {
-        ...sourceColumn,
-        items: sourceItems,
-      },
-      [destination.droppableId]: {
-        ...destColumn,
-        items: destItems,
-      },
-    });
-  } else {
-    const column = columns[source.droppableId];
-    const copiedItems = [...column.items];
-    const [removed] = copiedItems.splice(source.index, 1);
-    copiedItems.splice(destination.index, 0, removed);
-    copiedItems.forEach((element) => {
-      element.status = column.name;
-    });
-    setColumns({
-      ...columns,
-      [source.droppableId]: {
-        ...column,
-        items: copiedItems,
-      },
-    });
-  }
-  setToastStatus(true);
-};
-
-function Board() {
   const [columns, setColumns] = useState(columnsFromBackend);
+
+  useEffect(() => {
+    setColumns(columnsFromBackend);
+  }, []);
+
+  const handleDrag = (
+    curStatus,
+    prevStatus,
+    cardId,
+    cardIndex,
+    columns,
+    setColumns,
+    setToastStatus
+  ) => {
+    var tempResult = [];
+
+    for (var i in columnsFromBackend)
+      tempResult.push([i, columnsFromBackend[i]]);
+
+    const destData = tempResult.filter(
+      (element) => element[1].name === curStatus
+    );
+
+    const sourceData = tempResult.filter(
+      (element) => element[1].name === prevStatus
+    );
+
+    const result = {
+      combine: null,
+      destination: {
+        index: 0,
+        droppableId: destData[0][0],
+      },
+      draggableId: cardId,
+      mode: 'FLUID',
+      reason: 'DROP',
+      source: {
+        index: cardIndex,
+        droppableId: sourceData[0][0],
+      },
+      type: 'DEFAULT',
+    };
+    onDragEnd(result, columns, setColumns, setToastStatus);
+  };
+
+  const onDragEnd = (result, columns, setColumns, setToastStatus) => {
+    if (!result.destination) return;
+    const { source, destination } = result;
+
+    if (source.droppableId !== destination.droppableId) {
+      const sourceColumn = columns[source.droppableId];
+      const destColumn = columns[destination.droppableId];
+      const sourceItems = [...sourceColumn.items];
+      const destItems = [...destColumn.items];
+      const [removed] = sourceItems.splice(source.index, 1);
+      destItems.splice(destination.index, 0, removed);
+      sourceItems.forEach((element, index) => {
+        element.status = sourceColumn.name;
+        element.cardIndex = index;
+        updateTicket(element.id, element);
+      });
+      destItems.forEach((element, index) => {
+        element.status = destColumn.name;
+        element.cardIndex = index;
+        updateTicket(element.id, element);
+      });
+      setColumns({
+        ...columns,
+        [source.droppableId]: {
+          ...sourceColumn,
+          items: sourceItems,
+        },
+        [destination.droppableId]: {
+          ...destColumn,
+          items: destItems,
+        },
+      });
+      // addColumnHandler(sourceColumn.name, sourceItems);
+      // addColumnHandler(destColumn.name, destItems);
+    } else {
+      const column = columns[source.droppableId];
+      const copiedItems = [...column.items];
+      const [removed] = copiedItems.splice(source.index, 1);
+      copiedItems.splice(destination.index, 0, removed);
+      copiedItems.forEach((element, index) => {
+        element.status = column.name;
+        element.cardIndex = index;
+        updateTicket(element.id, element);
+      });
+      setColumns({
+        ...columns,
+        [source.droppableId]: {
+          ...column,
+          items: copiedItems,
+        },
+      });
+    }
+    // addColumnHandler(colName, colItems);
+    setToastStatus(true);
+  };
+
   const [toastStatus, setToastStatus] = useState(false);
 
   const dragHandler = (curStatus, prevStatus, cardId, cardIndex) => {
@@ -227,4 +204,11 @@ function Board() {
   );
 }
 
-export default Board;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    updateTicket: (docId, ticket) => dispatch(updateTicket(docId, ticket)),
+    addColumn: (name, ticketArray) => dispatch(addColumn(name, ticketArray)),
+  };
+};
+
+export default connect(null, mapDispatchToProps)(Board);

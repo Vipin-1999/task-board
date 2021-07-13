@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import uuid from 'uuid/v4';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogTitle from '@material-ui/core/DialogTitle';
@@ -16,9 +15,12 @@ import Description from '../description/Description';
 import StepperStatus from '../status/StepperStatus';
 import Category from '../category/Category';
 import StepperPriority from '../priority/StepperPriority';
+import { connect } from 'react-redux';
 
-const CreateCard = ({ setOpenDrawer }) => {
-  // const docId = uuid();
+import { addTicket } from '../../../store/actions/ticketActions';
+
+const CreateCard = (props) => {
+  const { setOpenDrawer, addTicket } = props;
   const [title, setTitle] = useState('');
   const reporter = 'New Reporter';
   const [category, setCategory] = useState('');
@@ -32,8 +34,6 @@ const CreateCard = ({ setOpenDrawer }) => {
     setTitle('');
     setCategory('');
     setContent('');
-    setStatus('');
-    setPriority('');
   };
 
   const handleCreateTaskOpen = () => {
@@ -62,8 +62,7 @@ const CreateCard = ({ setOpenDrawer }) => {
   };
 
   const handleCreateCard = () => {
-    console.log({
-      id: uuid(),
+    addTicket({
       title,
       reporter,
       category,
@@ -76,7 +75,6 @@ const CreateCard = ({ setOpenDrawer }) => {
   };
 
   const handleCancelCreateCard = () => {
-    console.log('Card cancelled');
     resetData();
     handleCreateTaskClose();
   };
@@ -150,4 +148,10 @@ const CreateCard = ({ setOpenDrawer }) => {
   );
 };
 
-export default CreateCard;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    addTicket: (ticket) => dispatch(addTicket(ticket)),
+  };
+};
+
+export default connect(null, mapDispatchToProps)(CreateCard);

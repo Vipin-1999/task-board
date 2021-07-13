@@ -7,8 +7,9 @@ import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import Board from '../board/Board';
+// import Board from '../board/Board';
 import CreateCard from '../alertDialog/card/CreateCard';
+import BoardList from '../board/BoardList';
 
 const drawerWidth = 200;
 
@@ -118,7 +119,8 @@ const SideDrawer = () => {
         </span> */}
       </Drawer>
       <main className={classes.content}>
-        <Board />
+        <BoardList />
+        {/* <Board /> */}
       </main>
     </div>
   );
