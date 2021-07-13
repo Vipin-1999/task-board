@@ -1,3 +1,4 @@
+import './App.css';
 import SideDrawer from './components/drawer/SideDrawer';
 
 function App() {

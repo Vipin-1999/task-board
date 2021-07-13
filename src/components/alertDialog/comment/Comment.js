@@ -37,14 +37,8 @@ const Comment = ({
           />
           <br />
           <div className='modal__comment--buttons' hidden={isHidden}>
-            <ActionButton
-              clickHandler={() => handleCommentSave(setHidden)}
-              btnName='Save'
-            />
-            <ActionButton
-              clickHandler={() => handleCommentCancel(setHidden)}
-              btnName='Cancel'
-            />
+            <ActionButton clickHandler={handleCommentSave} btnName='Save' />
+            <ActionButton clickHandler={handleCommentCancel} btnName='Cancel' />
           </div>
         </Grid>
       </Grid>
