@@ -1,6 +1,6 @@
-# TaskBoard
+# Task Board
 
-TaskBoard is a modern agile project management tool designed to streamline work processes and enhance team collaboration. Modeled after Atlassian's Jira board, TaskBoard offers an intuitive interface for managing tasks and tickets through a drag-and-drop board system. By simplifying ticket creation, filtering, and status tracking, it helps teams stay organized and efficient while planning for future backend integrations and automated suggestions.
+Task Board is a modern agile project management tool designed to streamline work processes and enhance team collaboration. Modeled after Atlassian's Jira board, TaskBoard offers an intuitive interface for managing tasks and tickets through a drag-and-drop board system. By simplifying ticket creation, filtering, and status tracking, it helps teams stay organized and efficient while planning for future backend integrations and automated suggestions.
 
 ## Features
 
@@ -64,8 +64,8 @@ TaskBoard is a modern agile project management tool designed to streamline work 
 
 1. **Clone the Repository:**
    ```bash
-   git clone https://github.com/Vipin-1999/TaskBoard.git
-   cd taskBoard
+   git clone https://github.com/Vipin-1999/task-board.git
+   cd task-board
    ```
 2. **Install Dependencies:**
    ```bash
