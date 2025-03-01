@@ -5,7 +5,7 @@ We appreciate your interest in contributing to TaskBoard! Here are some guidelin
 ## How to Contribute
 
 ### Reporting Issues
-- If you encounter a bug, please open an issue on the [GitHub issues page](https://github.com/Vipin-1999/TaskBoard.git/issues).
+- If you encounter a bug, please open an issue on the [GitHub issues page](https://github.com/Vipin-1999/task-board.git/issues).
 - When reporting issues, include as much detail as possible: steps to reproduce, expected behavior, and any error messages.
 
 ### Suggesting Enhancements
@@ -17,8 +17,8 @@ We appreciate your interest in contributing to TaskBoard! Here are some guidelin
    Click the "Fork" button at the top-right of the repository page.
 2. **Clone Your Fork:**  
    ```bash
-   git clone https://github.com/Vipin-1999/TaskBoard.git
-   cd taskBoard
+   git clone https://github.com/Vipin-1999/task-board.git
+   cd task-board
    ```
 3. **Create a New Branch:**  
    Create a branch for your feature or bug fix:
